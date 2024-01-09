@@ -18,7 +18,7 @@ header {
     border-radius: 50%; /* Forme du cercle */
     overflow: hidden; /* Recadrage de l'image en forme de cercle */
     margin-right: 5px; /* Espacement entre l'image et le texte de l'en-tête */
-    background-image: url('o_voleur.png'); /* Image de fond */
+    /*background-image: url('o_voleur.png');  Image de fond */
     background-size: cover; /* Ajuste la taille de l'image pour qu'elle couvre entièrement le conteneur */
     background-repeat: no-repeat; /* Empêche la répétition de l'image */
     background-position: center; /* Centre l'image dans le cercle */
