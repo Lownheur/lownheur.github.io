@@ -1,14 +1,16 @@
-/* Styles for the header */
 header {
-    display: flex;
-    flex-direction: row; /* Affiche le contenu de l'en-tête en ligne */
-    align-items: center; /* Aligns items vertically in the middle */
-    border: 4px solid #000;
-    position: relative;
-    justify-content: center; /* Aligns items horizontally in the center */
-    height: 100px; /* Hauteur de l'en-tête en pixels */
-    margin-left: 2%; /* Same left margin as in the header */
-  margin-right: 2%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  border: 4px solid #000;
+  position: fixed;
+  
+  height: 10vh;
+  margin: 0;
+  left: 20px; /* Même marge à gauche que dans le header */
+  right: 20px; /* Même marge à droite que dans le header */
+  margin-top: 20px;
 }
 header h1 {
   margin: 0;
@@ -16,16 +18,17 @@ header h1 {
   color: #000000;
 }
 footer {
-  height: 50px; /* Set the height to 100 pixels */
-  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 10vh;
+  position: fixed;
   bottom: 0;
-  left: 0; /* Extends the footer to the left edge */
-  right: 0; /* Extends the footer to the right edge */
+  left: 20px; /* Même marge à gauche que dans le header */
+  right: 20px; /* Même marge à droite que dans le header */
   margin: 0;
   border: 4px solid #000;
-  margin-bottom: 3%;
-  margin-left: 2%; /* Same left margin as in the header */
-  margin-right: 2%; /* Same right margin as in the header */
+  margin-bottom: 20px; /* Même marge inférieure que dans le header */
 }
 footer p {
   color: #000000 !important;
@@ -52,12 +55,28 @@ footer p {
   /* Styles for the header text */
 
   
+.social-media{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  line-height: 1.4;
+  max-height: 400px;
 
+  
+  
+  
+
+ 
+}
 
 .social-media a{
     color: #000000;
-    font-size: 30px;
+    font-size: 24px;
     font-weight: bold;
+    
+    
 }
  
   
