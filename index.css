@@ -13,10 +13,35 @@ header {
   margin-top: 20px;
 }
 header h1 {
-  margin: 0;
   font-weight: bold;
   color: #000000;
 }
+  
+.social-media{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  line-height: 1.4;
+  max-height: 400px;
+
+  
+  
+  
+
+ 
+}
+
+.social-media a{
+    color: #000000;
+    font-size: 24px;
+    font-weight: bold;
+    
+    
+}
+ 
+  
 footer {
   display: flex;
   justify-content: center;
@@ -54,29 +79,4 @@ footer p {
   
   /* Styles for the header text */
 
-  
-.social-media{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  line-height: 1.4;
-  max-height: 400px;
 
-  
-  
-  
-
- 
-}
-
-.social-media a{
-    color: #000000;
-    font-size: 24px;
-    font-weight: bold;
-    
-    
-}
- 
-  
