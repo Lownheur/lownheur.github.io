@@ -4,9 +4,10 @@
 }
 
 body{
-  height:100vh;
-  border: 8px solid #000;
-  display:flex;
+  margin:0;
+  
+  
+  
 }
 
 header {
@@ -93,7 +94,7 @@ footer {
   right: 20px; /* Même marge à droite que dans le header */
   
   border: 8px solid #000;
-  margin-bottom: 2vh; /* Même marge inférieure que dans le header */
+  
 }
 footer p {
   color: #000000 !important;
