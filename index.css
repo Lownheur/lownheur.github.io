@@ -25,16 +25,37 @@ header h1 {
   right: 20px; /* Même marge à droite que dans le header */
 }
 
+.parent_nav{
+  display:flex;
+  position:absolute;
+  bottom:78vh;
+  align-items: center;
+  justify-content: center;
+  
+  border: 4px solid #000;
+  right:20px;
+  left: 20px;
+  height: 5vh;
+  
+}
+.child_nav{
+  text-decoration: none;
+  color: #000000;
+  margin-right:10px;
+  font-weight :bold;
+  
+}
+
 
   
 .social-media{
   position: absolute;
   right:20px;
   left: 20px;
-  height:70vh;
+  height:60vh;
   text-align: center;
   border: 4px solid #000;
-  top: 15vh;
+  
   bottom:15vh;
   display: flex;
   flex-direction: column; /* Définit la direction du flux en tant que colonne */
