@@ -21,8 +21,7 @@ header {
 header h1 {
   font-weight: bold;
   color: #000000;
-  left: 50px; /* Même marge à gauche que dans le header */
-  right: 20px; /* Même marge à droite que dans le header */
+  
 }
 
 .parent_nav{
@@ -80,7 +79,7 @@ footer {
   justify-content: center;
   align-items: center;
   height: 10vh;
-  position: fixed;
+  position: absolute;
   bottom: 0;
   left: 20px; /* Même marge à gauche que dans le header */
   right: 20px; /* Même marge à droite que dans le header */
@@ -95,21 +94,27 @@ footer p {
 
 
   
-  /* Styles for the logo container 
+  /* Styles for the logo container */
   .logo-container {
-    width: 100px; /* Largeur du conteneur epn pourcentage 
-    padding-top: 100px; /* Hauteur du conteneur en pourcentage (pour créer un cercle) 
-    border: 1px solid #000; /* Bordure noire 
-    border-radius: 50%; /* Forme du cercle 
-    overflow: hidden; /* Recadrage de l'imge en forme de cercle 
-    margin-right: 5px; /* Espacement entre l'image et le texte de l'en-tête 
-    /*background-image: url('o_voleur.png');  Image de fond 
-    background-size: cover; /* Ajuste la taille de l'image pour qu'elle couvre entièrement le conteneur 
-
-    background-repeat: no-repeat; /* Empêche la répétition de l'image 
-    background-position: center; /* Centre l'image dans le cercle 
+   
+    width: 80px; /* Réduire la largeur du logo */
+    padding-top: 80px; /* Réduire la hauteur du conteneur */
+    border: 4px solid #000;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 5px;
+    position: relative;
   }
   
-  /* Styles for the header text */
-
-
+  .logo-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('logo.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
