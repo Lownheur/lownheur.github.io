@@ -1,23 +1,39 @@
-<html>
-<head></head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Channel Info</title>
+  <!-- Add your head content here -->
+</head>
 <body>
+
+  <!-- Add your HTML content here -->
+
   <script>
     var YOUR_CLIENT_ID = '91235972960-bjuq63mbtmdemk4qsa4epb4o6c5vo1it.apps.googleusercontent.com';
     var YOUR_REDIRECT_URI = 'https://lownheur.com';
     var AUTHORIZATION_ENDPOINT = 'https://accounts.google.com/o/oauth2/auth';
     var TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token';
 
-    // Fonction pour vérifier si l'utilisateur est connecté
+    // Function to check if the user is logged in
     function checkIfUserIsLoggedIn() {
       var accessToken = getCookie('oauth2-test-access-token');
       if (accessToken) {
         getUserInfo(accessToken);
       } else {
-        oauth2SignIn();
+        // Check if authorization code is present in the URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var authorizationCode = urlParams.get('code');
+        if (authorizationCode) {
+          exchangeCodeForToken(authorizationCode);
+        } else {
+          oauth2SignIn();
+        }
       }
     }
 
-    // Fonction pour échanger le code d'autorisation contre un jeton d'accès
+    // Function to exchange the authorization code for an access token
     function exchangeCodeForToken(code) {
       var xhr = new XMLHttpRequest();
       xhr.open('POST', TOKEN_ENDPOINT);
@@ -26,7 +42,7 @@
       var tokenParams = {
         'code': code,
         'client_id': YOUR_CLIENT_ID,
-        'client_secret': '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', // Remplacez par votre client secret
+        'client_secret': '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', // Replace with your client secret
         'redirect_uri': YOUR_REDIRECT_URI,
         'grant_type': 'authorization_code'
       };
@@ -42,11 +58,11 @@
             var response = JSON.parse(xhr.response);
             var accessToken = response.access_token;
 
-            // Utiliser un cookie sécurisé pour stocker le jeton d'accès
-            setCookie('oauth2-test-access-token', accessToken, 1); // 1 jour d'expiration
+            // Use a secure cookie to store the access token
+            setCookie('oauth2-test-access-token', accessToken, 1); // 1 day expiration
             getUserInfo(accessToken);
           } else {
-            console.error('Échec de l\'échange de jeton');
+            console.error('Token exchange failed');
           }
         }
       };
@@ -54,25 +70,7 @@
       xhr.send(formData.join('&'));
     }
 
-    // Fonction utilitaire pour définir la valeur d'un cookie
-    function setCookie(name, value, days) {
-      var expires = '';
-      if (days) {
-        var date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = '; expires=' + date.toUTCString();
-      }
-      document.cookie = name + '=' + value + expires + '; path=/; secure; samesite=strict';
-    }
-
-    // Fonction utilitaire pour récupérer la valeur d'un cookie
-    function getCookie(name) {
-      var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-      if (match) return match[2];
-      else return null;
-    }
-
-    // Fonction pour obtenir les informations de l'utilisateur
+    // Function to get user information
     function getUserInfo(accessToken) {
       var xhr = new XMLHttpRequest();
       xhr.open('GET', 'https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true&access_token=' + accessToken);
@@ -83,22 +81,21 @@
           document.getElementById('channelName').innerText = 'Channel Name: ' + channelName;
           document.getElementById('logoutButton').style.display = 'block';
         } else if (xhr.readyState === 4 && xhr.status === 401) {
-          // Jeton non valide, gérer en conséquence
-          console.error('Jeton non valide');
-          setCookie('oauth2-test-access-token', '', 0); // Supprimer le cookie
-          oauth2SignIn(); // Rediriger vers le processus d'autorisation
+          console.error('Invalid token');
+          setCookie('oauth2-test-access-token', '', 0); // Remove the cookie
+          oauth2SignIn(); // Redirect to the authorization process
         }
       };
       xhr.send(null);
     }
 
-    // Fonction pour gérer la déconnexion
+    // Function to handle logout
     function logout() {
-      setCookie('oauth2-test-access-token', '', 0); // Supprimer le cookie
-      location.reload(); // Recharger la page pour retourner à l'état non connecté
+      setCookie('oauth2-test-access-token', '', 0); // Remove the cookie
+      location.reload(); // Reload the page to go back to the logged-out state
     }
 
-    // Fonction pour démarrer le processus d'autorisation
+    // Function to start the authorization process
     function oauth2SignIn() {
       var authorizationUrl =
         AUTHORIZATION_ENDPOINT +
@@ -108,19 +105,39 @@
         '&state=' + encodeURIComponent('try_sample_request') +
         '&response_type=code';
 
-      // Rediriger l'utilisateur vers l'URL d'autorisation
+      // Redirect the user to the authorization URL
       window.location.href = authorizationUrl;
     }
 
-    // Vérifier la connexion lorsque la page se charge
+    // Function to set the value of a cookie
+    function setCookie(name, value, days) {
+      var expires = '';
+      if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = '; expires=' + date.toUTCString();
+      }
+      document.cookie = name + '=' + value + expires + '; path=/; secure; samesite=strict';
+    }
+
+    // Function to get the value of a cookie
+    function getCookie(name) {
+      var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      if (match) return match[2];
+      else return null;
+    }
+
+    // Check login status when the page loads
     checkIfUserIsLoggedIn();
   </script>
 
-  <!-- Ajouter une balise span pour afficher le nom de la chaîne -->
+  <!-- Add a span element to display the channel name -->
   <span id="channelName"></span>
 
-  <!-- Ajouter un bouton pour se déconnecter -->
+  <!-- Add a button for logout -->
   <button id="logoutButton" onclick="logout();" style="display: none;">Logout</button>
+
+  <!-- Add other HTML content as needed -->
 
 </body>
 </html>
