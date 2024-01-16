@@ -4,6 +4,9 @@
   <script>
     var YOUR_CLIENT_ID = '91235972960-bjuq63mbtmdemk4qsa4epb4o6c5vo1it.apps.googleusercontent.com';
     var YOUR_REDIRECT_URI = 'https://lownheur.com';
+    var AUTHORIZATION_ENDPOINT = 'https://accounts.google.com/o/oauth2/auth';
+    var TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token';
+
     var fragmentString = location.hash.substring(1);
 
     // Parse query string to see if page request is coming from OAuth 2.0 server.
@@ -12,83 +15,79 @@
     while (m = regex.exec(fragmentString)) {
       params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
     }
+
     if (Object.keys(params).length > 0) {
       localStorage.setItem('oauth2-test-params', JSON.stringify(params));
       if (params['state'] && params['state'] == 'try_sample_request') {
-        trySampleRequest();
+        exchangeCodeForToken(params['code']);
       }
+    } else {
+      oauth2SignIn();
     }
 
-    // If there's an access token, try an API request.
-    // Otherwise, start OAuth 2.0 flow.
-    function trySampleRequest() {
-      var params = JSON.parse(localStorage.getItem('oauth2-test-params'));
-      if (params && params['access_token']) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET',
-          'https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true&' +
-          'access_token=' + params['access_token']);
-        xhr.onreadystatechange = function (e) {
-          if (xhr.readyState === 4 && xhr.status === 200) {
-            // Parse the response and display the channel name.
-            var response = JSON.parse(xhr.response);
-            var channelName = response.items[0].snippet.title;
-            document.getElementById('channelName').innerText = 'Channel Name: ' + channelName;
-          } else if (xhr.readyState === 4 && xhr.status === 401) {
-            // Token invalid, so prompt for user permission.
-            oauth2SignIn();
-          }
-        };
-        xhr.send(null);
-      } else {
-        oauth2SignIn();
-      }
-    }
+    function exchangeCodeForToken(code) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', TOKEN_ENDPOINT);
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-    /*
-     * Create form to request access token from Google's OAuth 2.0 server.
-     */
-    function oauth2SignIn() {
-      // Google's OAuth 2.0 endpoint for requesting an access token
-      var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
-
-      // Create element to open OAuth 2.0 endpoint in a new window.
-      var form = document.createElement('form');
-      form.setAttribute('method', 'GET'); // Send as a GET request.
-      form.setAttribute('action', oauth2Endpoint);
-
-      // Parameters to pass to OAuth 2.0 endpoint.
-      var params = {
+      var tokenParams = {
+        'code': code,
         'client_id': YOUR_CLIENT_ID,
+        'client_secret': 'YOUR_CLIENT_SECRET', // Replace with your client secret
         'redirect_uri': YOUR_REDIRECT_URI,
-        'scope': 'https://www.googleapis.com/auth/youtube.force-ssl',
-        'state': 'try_sample_request',
-        'include_granted_scopes': 'true',
-        'response_type': 'token'
+        'grant_type': 'authorization_code'
       };
 
-      // Add form parameters as hidden input values.
-      for (var p in params) {
-        var input = document.createElement('input');
-        input.setAttribute('type', 'hidden');
-        input.setAttribute('name', p);
-        input.setAttribute('value', params[p]);
-        form.appendChild(input);
+      var formData = [];
+      for (var key in tokenParams) {
+        formData.push(encodeURIComponent(key) + '=' + encodeURIComponent(tokenParams[key]));
       }
 
-      // Add form to the page and submit it to open the OAuth 2.0 endpoint.
-      document.body.appendChild(form);
-      form.submit();
+      xhr.onreadystatechange = function (e) {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var response = JSON.parse(xhr.response);
+            var accessToken = response.access_token;
+            getUserInfo(accessToken);
+          } else {
+            console.error('Token exchange failed');
+          }
+        }
+      };
+
+      xhr.send(formData.join('&'));
+    }
+
+    function getUserInfo(accessToken) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true&access_token=' + accessToken);
+      xhr.onreadystatechange = function (e) {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          var response = JSON.parse(xhr.response);
+          var channelName = response.items[0].snippet.title;
+          document.getElementById('channelName').innerText = 'Channel Name: ' + channelName;
+        } else if (xhr.readyState === 4 && xhr.status === 401) {
+          // Token invalid, handle accordingly
+          console.error('Token invalid');
+        }
+      };
+      xhr.send(null);
+    }
+
+    function oauth2SignIn() {
+      var authorizationUrl =
+        AUTHORIZATION_ENDPOINT +
+        '?client_id=' + encodeURIComponent(YOUR_CLIENT_ID) +
+        '&redirect_uri=' + encodeURIComponent(YOUR_REDIRECT_URI) +
+        '&scope=' + encodeURIComponent('https://www.googleapis.com/auth/youtube.force-ssl') +
+        '&state=' + encodeURIComponent('try_sample_request') +
+        '&response_type=code';
+
+      window.location.href = authorizationUrl;
     }
   </script>
 
-  <!-- Ajouter une balise span pour afficher le nom de la chaîne -->
   <span id="channelName"></span>
 
-  <!-- Remplacer le bouton par l'appel à trySampleRequest() -->
-  <!--<button onclick="trySampleRequest();">Try sample request</button>-->
-  <script>
-    trySampleRequest(); // Appeler la fonction directement au chargement de la page
-  </script>
 </body>
 </html>
