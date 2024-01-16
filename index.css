@@ -73,7 +73,7 @@ nav a {
   flex-direction: column; /* Définit la direction du flux en tant que colonne */
   align-items: center;
   justify-content: center;
-
+  overflow: auto;
 
  
 }
