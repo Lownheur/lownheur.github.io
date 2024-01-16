@@ -1,5 +1,5 @@
 // Options
-const CLIENT_ID = '739916412029-2v255arol9ntohe68hndvll6h7junank.apps.googleusercontent.com';
+const CLIENT_ID = '91235972960-bjuq63mbtmdemk4qsa4epb4o6c5vo1it.apps.googleusercontent.com';
 const DISCOVERY_DOCS = [
   'https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest'
 ];
@@ -12,21 +12,14 @@ const channelForm = document.getElementById('channel-form');
 const channelInput = document.getElementById('channel-input');
 const videoContainer = document.getElementById('video-container');
 
-const defaultChannel = 'techguyweb';
-
-// Form submit and change channel
-channelForm.addEventListener('submit', e => {
-  e.preventDefault();
-
-  const channel = channelInput.value;
-
-  getChannel(channel);
-});
-
-// Load auth2 library
+const defaultChannel="gkjeznge";
 function handleClientLoad() {
   gapi.load('client:auth2', initClient);
 }
+
+
+// Load auth2 library
+
 
 // Init API client library and set up sign in listeners
 function initClient() {
@@ -78,80 +71,4 @@ function showChannelData(data) {
   channelData.innerHTML = data;
 }
 
-// Get channel from API
-function getChannel(channel) {
-  gapi.client.youtube.channels
-    .list({
-      part: 'snippet,contentDetails,statistics',
-      forUsername: channel
-    })
-    .then(response => {
-      console.log(response);
-      const channel = response.result.items[0];
 
-      const output = `
-        <ul class="collection">
-          <li class="collection-item">Title: ${channel.snippet.title}</li>
-          <li class="collection-item">ID: ${channel.id}</li>
-          <li class="collection-item">Subscribers: ${numberWithCommas(
-            channel.statistics.subscriberCount
-          )}</li>
-          <li class="collection-item">Views: ${numberWithCommas(
-            channel.statistics.viewCount
-          )}</li>
-          <li class="collection-item">Videos: ${numberWithCommas(
-            channel.statistics.videoCount
-          )}</li>
-        </ul>
-        <p>${channel.snippet.description}</p>
-        <hr>
-        <a class="btn grey darken-2" target="_blank" href="https://youtube.com/${
-          channel.snippet.customUrl
-        }">Visit Channel</a>
-      `;
-      showChannelData(output);
-
-      const playlistId = channel.contentDetails.relatedPlaylists.uploads;
-      requestVideoPlaylist(playlistId);
-    })
-    .catch(err => alert('No Channel By That Name'));
-}
-
-// Add commas to number
-function numberWithCommas(x) {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
-
-function requestVideoPlaylist(playlistId) {
-  const requestOptions = {
-    playlistId: playlistId,
-    part: 'snippet',
-    maxResults: 10
-  };
-
-  const request = gapi.client.youtube.playlistItems.list(requestOptions);
-
-  request.execute(response => {
-    console.log(response);
-    const playListItems = response.result.items;
-    if (playListItems) {
-      let output = '<br><h4 class="center-align">Latest Videos</h4>';
-
-      // Loop through videos and append output
-      playListItems.forEach(item => {
-        const videoId = item.snippet.resourceId.videoId;
-
-        output += `
-          <div class="col s3">
-          <iframe width="100%" height="auto" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-          </div>
-        `;
-      });
-
-      // Output videos
-      videoContainer.innerHTML = output;
-    } else {
-      videoContainer.innerHTML = 'No Uploaded Videos';
-    }
-  });
-}
