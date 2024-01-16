@@ -30,11 +30,10 @@
           'access_token=' + params['access_token']);
         xhr.onreadystatechange = function (e) {
           if (xhr.readyState === 4 && xhr.status === 200) {
-            var response = JSON.parse(xhr.responseText);
-            var youtubeAccountDiv = document.getElementById('youtube-account');
-            youtubeAccountDiv.innerHTML = '<h2>Your YouTube Account</h2>' +
-              '<p>Channel Name: ' + response.items[0].snippet.title + '</p>' +
-              '<p>Channel ID: ' + response.items[0].id + '</p>';
+            // Parse the response and display the channel name.
+            var response = JSON.parse(xhr.response);
+            var channelName = response.items[0].snippet.title;
+            document.getElementById('channelName').innerText = 'Channel Name: ' + channelName;
           } else if (xhr.readyState === 4 && xhr.status === 401) {
             // Token invalid, so prompt for user permission.
             oauth2SignIn();
@@ -53,7 +52,7 @@
       // Google's OAuth 2.0 endpoint for requesting an access token
       var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
 
-      // Create element to open OAuth 2.0 endpoint in new window.
+      // Create element to open OAuth 2.0 endpoint in a new window.
       var form = document.createElement('form');
       form.setAttribute('method', 'GET'); // Send as a GET request.
       form.setAttribute('action', oauth2Endpoint);
@@ -77,12 +76,19 @@
         form.appendChild(input);
       }
 
-      // Add form to page and submit it to open the OAuth 2.0 endpoint.
+      // Add form to the page and submit it to open the OAuth 2.0 endpoint.
       document.body.appendChild(form);
       form.submit();
     }
   </script>
 
-  <div id="youtube-account"></div>
+  <!-- Ajouter une balise span pour afficher le nom de la chaîne -->
+  <span id="channelName"></span>
+
+  <!-- Remplacer le bouton par l'appel à trySampleRequest() -->
+  <!--<button onclick="trySampleRequest();">Try sample request</button>-->
   <script>
-    if (params && params['access_token']) { var div = document.createElement('div'); div.setAttribute('id', 'youtube-account'); document.body.appendChild(div); displayYouTubeAccount(params['access_token']); } else { var button = document.createElement('button'); button.textContent = 'Connect with YouTube'; button.onclick = oauth2SignIn; document.body.appendChild(button); }
+    trySampleRequest(); // Appeler la fonction directement au chargement de la page
+  </script>
+</body>
+</html>
