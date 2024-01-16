@@ -9,7 +9,7 @@
 
     // Fonction pour vérifier si l'utilisateur est connecté
     function checkIfUserIsLoggedIn() {
-      var accessToken = localStorage.getItem('oauth2-test-access-token');
+      var accessToken = getCookie('oauth2-test-access-token');
       if (accessToken) {
         getUserInfo(accessToken);
       } else {
@@ -41,7 +41,9 @@
           if (xhr.status === 200) {
             var response = JSON.parse(xhr.response);
             var accessToken = response.access_token;
-            localStorage.setItem('oauth2-test-access-token', accessToken);
+
+            // Utiliser un cookie sécurisé pour stocker le jeton d'accès
+            setCookie('oauth2-test-access-token', accessToken, 1); // 1 jour d'expiration
             getUserInfo(accessToken);
           } else {
             console.error('Échec de l\'échange de jeton');
@@ -50,6 +52,24 @@
       };
 
       xhr.send(formData.join('&'));
+    }
+
+    // Fonction utilitaire pour définir la valeur d'un cookie
+    function setCookie(name, value, days) {
+      var expires = '';
+      if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = '; expires=' + date.toUTCString();
+      }
+      document.cookie = name + '=' + value + expires + '; path=/; secure; samesite=strict';
+    }
+
+    // Fonction utilitaire pour récupérer la valeur d'un cookie
+    function getCookie(name) {
+      var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      if (match) return match[2];
+      else return null;
     }
 
     // Fonction pour obtenir les informations de l'utilisateur
@@ -65,7 +85,7 @@
         } else if (xhr.readyState === 4 && xhr.status === 401) {
           // Jeton non valide, gérer en conséquence
           console.error('Jeton non valide');
-          localStorage.removeItem('oauth2-test-access-token'); // Supprimer le token invalide
+          setCookie('oauth2-test-access-token', '', 0); // Supprimer le cookie
           oauth2SignIn(); // Rediriger vers le processus d'autorisation
         }
       };
@@ -74,7 +94,7 @@
 
     // Fonction pour gérer la déconnexion
     function logout() {
-      localStorage.removeItem('oauth2-test-access-token');
+      setCookie('oauth2-test-access-token', '', 0); // Supprimer le cookie
       location.reload(); // Recharger la page pour retourner à l'état non connecté
     }
 
