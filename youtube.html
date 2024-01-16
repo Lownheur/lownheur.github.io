@@ -4,12 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OAuth 2.0 Example</title>
-  
 </head>
 <body>
   <nav class="parent_nav">
     <a href="index.html" class="child_nav">Accueil</a> 
-    <a href="linktree.html" class="child_nav">Liktree</a>
+    <a href="linktree.html" class="child_nav">Linktree</a>
     <a href="youtube.html" class="child_nav">youtube api</a>
   </nav>
   <script>
@@ -22,19 +21,17 @@
       return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     }
 
-    function storeParamsInCookie(params) {
-      var expirationDate = new Date();
-      expirationDate.setFullYear(expirationDate.getFullYear() + 10); // Expire dans 10 ans
-      document.cookie = 'oauth2-test-params=' + encodeURIComponent(JSON.stringify(params)) + '; expires=' + expirationDate.toUTCString() + '; path=/';
+    function storeParamsInHash(params) {
+      window.location.hash = 'oauth2-test-params=' + encodeURIComponent(JSON.stringify(params));
     }
 
     function getStoredParams() {
-      var cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)oauth2-test-params\s*=\s*([^;]*).*$)|^.*$/, '$1');
-      return cookieValue ? JSON.parse(decodeURIComponent(cookieValue)) : null;
+      var hashValue = window.location.hash.substring(1);
+      return hashValue ? JSON.parse(decodeURIComponent(hashValue)) : null;
     }
 
     function clearStoredParams() {
-      document.cookie = 'oauth2-test-params=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      window.location.hash = '';
     }
 
     function checkAuthorizationStatus() {
@@ -85,7 +82,7 @@
         'response_type': 'token'
       };
 
-      storeParamsInCookie(params);
+      storeParamsInHash(params);
 
       var form = document.createElement('form');
       form.setAttribute('method', 'GET');
