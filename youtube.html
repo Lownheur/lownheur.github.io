@@ -1,5 +1,4 @@
-
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -13,21 +12,22 @@
   var YOUR_REDIRECT_URI = 'https://lownheur.com';
   var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
   var logoutEndpoint = 'https://accounts.google.com/logout';
-  
+
   function generateRandomState() {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
   }
 
-  function storeParamsInLocalStorage(params) {
-    localStorage.setItem('oauth2-test-params', JSON.stringify(params));
+  function storeParamsInCookie(params) {
+    document.cookie = 'oauth2-test-params=' + encodeURIComponent(JSON.stringify(params)) + '; expires=Thu, 18 Dec 2030 12:00:00 UTC; path=/';
   }
 
   function getStoredParams() {
-    return JSON.parse(localStorage.getItem('oauth2-test-params'));
+    var cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)oauth2-test-params\s*=\s*([^;]*).*$)|^.*$/, '$1');
+    return cookieValue ? JSON.parse(decodeURIComponent(cookieValue)) : null;
   }
 
   function clearStoredParams() {
-    localStorage.removeItem('oauth2-test-params');
+    document.cookie = 'oauth2-test-params=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
   }
 
   function checkAuthorizationStatus() {
@@ -78,7 +78,7 @@
       'response_type': 'token'
     };
 
-    storeParamsInLocalStorage(params);
+    storeParamsInCookie(params);
 
     var form = document.createElement('form');
     form.setAttribute('method', 'GET');
