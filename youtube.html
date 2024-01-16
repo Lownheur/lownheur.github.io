@@ -65,6 +65,7 @@
         } else if (xhr.readyState === 4 && xhr.status === 401) {
           // Jeton non valide, gérer en conséquence
           console.error('Jeton non valide');
+          localStorage.removeItem('oauth2-test-access-token'); // Supprimer le token invalide
           oauth2SignIn(); // Rediriger vers le processus d'autorisation
         }
       };
