@@ -1,67 +1,89 @@
 
-    <html><head></head><body>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OAuth 2.0 Example</title>
+</head>
+<body>
+
 <script>
   var YOUR_CLIENT_ID = '91235972960-bjuq63mbtmdemk4qsa4epb4o6c5vo1it.apps.googleusercontent.com';
   var YOUR_REDIRECT_URI = 'https://lownheur.com';
-  var fragmentString = location.hash.substring(1);
-
-  // Parse query string to see if page request is coming from OAuth 2.0 server.
-  var params = {};
-  var regex = /([^&=]+)=([^&]*)/g, m;
-  while (m = regex.exec(fragmentString)) {
-    params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
-  }
-  if (Object.keys(params).length > 0) {
-    localStorage.setItem('oauth2-test-params', JSON.stringify(params) );
-    if (params['state'] && params['state'] == 'try_sample_request') {
-      trySampleRequest();
-    }
+  var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
+  var logoutEndpoint = 'https://accounts.google.com/logout';
+  
+  function generateRandomState() {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
   }
 
-  // If there's an access token, try an API request.
-  // Otherwise, start OAuth 2.0 flow.
-  function trySampleRequest() {
-    var params = JSON.parse(localStorage.getItem('oauth2-test-params'));
-    if (params && params['access_token']) {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET',
-          'https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true&' +
-          'access_token=' + params['access_token']);
-      xhr.onreadystatechange = function (e) {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-          console.log(xhr.response);
-        } else if (xhr.readyState === 4 && xhr.status === 401) {
-          // Token invalid, so prompt for user permission.
-          oauth2SignIn();
-        }
-      };
-      xhr.send(null);
+  function storeParamsInLocalStorage(params) {
+    localStorage.setItem('oauth2-test-params', JSON.stringify(params));
+  }
+
+  function getStoredParams() {
+    return JSON.parse(localStorage.getItem('oauth2-test-params'));
+  }
+
+  function clearStoredParams() {
+    localStorage.removeItem('oauth2-test-params');
+  }
+
+  function checkAuthorizationStatus() {
+    var storedParams = getStoredParams();
+
+    if (storedParams && storedParams['access_token']) {
+      // L'utilisateur est connecté
+      showUserInfo(storedParams['access_token']);
+      showLogoutButton();
     } else {
-      oauth2SignIn();
+      // L'utilisateur n'est pas connecté
+      showLoginButton();
     }
   }
 
-  /*
-   * Create form to request access token from Google's OAuth 2.0 server.
-   */
-  function oauth2SignIn() {
-    // Google's OAuth 2.0 endpoint for requesting an access token
-    var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
+  function showUserInfo(accessToken) {
+    // Utilisez l'accessToken pour effectuer des requêtes API ou afficher les informations de l'utilisateur
+    console.log("User is logged in. Access Token: " + accessToken);
+  }
 
-    // Create element to open OAuth 2.0 endpoint in new window.
+  function showLoginButton() {
+    var loginButton = document.createElement('button');
+    loginButton.textContent = 'Login with Google';
+    loginButton.onclick = function () {
+      oauth2SignIn();
+    };
+    document.body.appendChild(loginButton);
+  }
+
+  function showLogoutButton() {
+    var logoutButton = document.createElement('button');
+    logoutButton.textContent = 'Logout';
+    logoutButton.onclick = function () {
+      logout();
+    };
+    document.body.appendChild(logoutButton);
+  }
+
+  function oauth2SignIn() {
+    var state = generateRandomState();
+
+    var params = {
+      'client_id': YOUR_CLIENT_ID,
+      'redirect_uri': YOUR_REDIRECT_URI,
+      'scope': 'https://www.googleapis.com/auth/youtube.force-ssl',
+      'state': state,
+      'include_granted_scopes': 'true',
+      'response_type': 'token'
+    };
+
+    storeParamsInLocalStorage(params);
+
     var form = document.createElement('form');
-    form.setAttribute('method', 'GET'); // Send as a GET request.
+    form.setAttribute('method', 'GET');
     form.setAttribute('action', oauth2Endpoint);
 
-    // Parameters to pass to OAuth 2.0 endpoint.
-    var params = {'client_id': YOUR_CLIENT_ID,
-                  'redirect_uri': YOUR_REDIRECT_URI,
-                  'scope': 'https://www.googleapis.com/auth/youtube.force-ssl',
-                  'state': 'try_sample_request',
-                  'include_granted_scopes': 'true',
-                  'response_type': 'token'};
-
-    // Add form parameters as hidden input values.
     for (var p in params) {
       var input = document.createElement('input');
       input.setAttribute('type', 'hidden');
@@ -70,11 +92,19 @@
       form.appendChild(input);
     }
 
-    // Add form to page and submit it to open the OAuth 2.0 endpoint.
     document.body.appendChild(form);
     form.submit();
   }
+
+  function logout() {
+    clearStoredParams();
+    // Vous pouvez également rediriger l'utilisateur vers la page de déconnexion de Google
+    window.location.href = logoutEndpoint;
+  }
+
+  // Vérifiez le statut d'autorisation lors du chargement de la page
+  checkAuthorizationStatus();
 </script>
 
-<button onclick="trySampleRequest();">Try sample request</button>
-</body></html>
+</body>
+</html>
