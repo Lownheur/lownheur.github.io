@@ -43,7 +43,6 @@
             var accessToken = response.access_token;
             localStorage.setItem('oauth2-test-access-token', accessToken);
             getUserInfo(accessToken);
-            window.history.replaceState({}, document.title, window.location.pathname);
           } else {
             console.error('Échec de l\'échange de jeton');
           }
@@ -66,6 +65,7 @@
         } else if (xhr.readyState === 4 && xhr.status === 401) {
           // Jeton non valide, gérer en conséquence
           console.error('Jeton non valide');
+          oauth2SignIn(); // Rediriger vers le processus d'autorisation
         }
       };
       xhr.send(null);
@@ -91,20 +91,8 @@
       window.location.href = authorizationUrl;
     }
 
-    var fragmentString = location.hash.substring(1);
-
-    // Analyser la chaîne de requête pour voir si la demande de page provient du serveur OAuth 2.0.
-    var params = {};
-    var regex = /([^&=]+)=([^&]*)/g, m;
-    while (m = regex.exec(fragmentString)) {
-      params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
-    }
-
-    if (params['code']) {
-      exchangeCodeForToken(params['code']);
-    } else {
-      checkIfUserIsLoggedIn();
-    }
+    // Vérifier la connexion lorsque la page se charge
+    checkIfUserIsLoggedIn();
   </script>
 
   <!-- Ajouter une balise span pour afficher le nom de la chaîne -->
