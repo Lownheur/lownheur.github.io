@@ -7,24 +7,17 @@
     var AUTHORIZATION_ENDPOINT = 'https://accounts.google.com/o/oauth2/auth';
     var TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token';
 
-    var fragmentString = location.hash.substring(1);
-
-    // Parse query string to see if page request is coming from OAuth 2.0 server.
-    var params = {};
-    var regex = /([^&=]+)=([^&]*)/g, m;
-    while (m = regex.exec(fragmentString)) {
-      params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
-    }
-
-    if (Object.keys(params).length > 0) {
-      localStorage.setItem('oauth2-test-params', JSON.stringify(params));
-      if (params['state'] && params['state'] == 'try_sample_request') {
-        exchangeCodeForToken(params['code']);
+    // Fonction pour vérifier si l'utilisateur est connecté
+    function checkIfUserIsLoggedIn() {
+      var accessToken = localStorage.getItem('oauth2-test-access-token');
+      if (accessToken) {
+        getUserInfo(accessToken);
+      } else {
+        oauth2SignIn();
       }
-    } else {
-      oauth2SignIn();
     }
 
+    // Fonction pour échanger le code d'autorisation contre un jeton d'accès
     function exchangeCodeForToken(code) {
       var xhr = new XMLHttpRequest();
       xhr.open('POST', TOKEN_ENDPOINT);
@@ -33,7 +26,7 @@
       var tokenParams = {
         'code': code,
         'client_id': YOUR_CLIENT_ID,
-        'client_secret': 'YOUR_CLIENT_SECRET', // Replace with your client secret
+        'client_secret': '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', // Remplacez par votre client secret
         'redirect_uri': YOUR_REDIRECT_URI,
         'grant_type': 'authorization_code'
       };
@@ -48,9 +41,10 @@
           if (xhr.status === 200) {
             var response = JSON.parse(xhr.response);
             var accessToken = response.access_token;
+            localStorage.setItem('oauth2-test-access-token', accessToken);
             getUserInfo(accessToken);
           } else {
-            console.error('Token exchange failed');
+            console.error('Échec de l\'échange de jeton');
           }
         }
       };
@@ -58,6 +52,7 @@
       xhr.send(formData.join('&'));
     }
 
+    // Fonction pour obtenir les informations de l'utilisateur
     function getUserInfo(accessToken) {
       var xhr = new XMLHttpRequest();
       xhr.open('GET', 'https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true&access_token=' + accessToken);
@@ -67,13 +62,20 @@
           var channelName = response.items[0].snippet.title;
           document.getElementById('channelName').innerText = 'Channel Name: ' + channelName;
         } else if (xhr.readyState === 4 && xhr.status === 401) {
-          // Token invalid, handle accordingly
-          console.error('Token invalid');
+          // Jeton non valide, gérer en conséquence
+          console.error('Jeton non valide');
         }
       };
       xhr.send(null);
     }
 
+    // Fonction pour gérer la déconnexion
+    function logout() {
+      localStorage.removeItem('oauth2-test-access-token');
+      location.reload(); // Recharger la page pour retourner à l'état non connecté
+    }
+
+    // Fonction pour démarrer le processus d'autorisation
     function oauth2SignIn() {
       var authorizationUrl =
         AUTHORIZATION_ENDPOINT +
@@ -83,11 +85,34 @@
         '&state=' + encodeURIComponent('try_sample_request') +
         '&response_type=code';
 
+      // Rediriger l'utilisateur vers l'URL d'autorisation
       window.location.href = authorizationUrl;
+    }
+
+    var fragmentString = location.hash.substring(1);
+
+    // Analyser la chaîne de requête pour voir si la demande de page provient du serveur OAuth 2.0.
+    var params = {};
+    var regex = /([^&=]+)=([^&]*)/g, m;
+    while (m = regex.exec(fragmentString)) {
+      params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+    }
+
+    if (Object.keys(params).length > 0) {
+      localStorage.setItem('oauth2-test-params', JSON.stringify(params));
+      if (params['state'] && params['state'] == 'try_sample_request') {
+        exchangeCodeForToken(params['code']);
+      }
+    } else {
+      checkIfUserIsLoggedIn();
     }
   </script>
 
+  <!-- Ajouter une balise span pour afficher le nom de la chaîne -->
   <span id="channelName"></span>
+
+  <!-- Ajouter un bouton pour se déconnecter -->
+  <button onclick="logout();">Logout</button>
 
 </body>
 </html>
