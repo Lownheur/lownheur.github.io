@@ -3,105 +3,141 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OAuth 2.0 Example</title>
+  <title>YouTube Channel Info</title>
+  <!-- Add your head content here -->
 </head>
 <body>
-  <nav class="parent_nav">
-    <a href="index.html" class="child_nav">Accueil</a> 
-    <a href="linktree.html" class="child_nav">Linktree</a>
-    <a href="youtube.html" class="child_nav">youtube api</a>
-  </nav>
+
+  <!-- Add your HTML content here -->
+
   <script>
     var YOUR_CLIENT_ID = '91235972960-bjuq63mbtmdemk4qsa4epb4o6c5vo1it.apps.googleusercontent.com';
     var YOUR_REDIRECT_URI = 'https://lownheur.com';
-    var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
-    var logoutEndpoint = 'https://accounts.google.com/logout';
+    var AUTHORIZATION_ENDPOINT = 'https://accounts.google.com/o/oauth2/auth';
+    var TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token';
 
-    function generateRandomState() {
-      return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    }
-
-    function storeParamsInLocalStorage(params) {
-      localStorage.setItem('oauth2-test-params', JSON.stringify(params));
-    }
-
-    function getStoredParams() {
-      var localStorageValue = localStorage.getItem('oauth2-test-params');
-      return localStorageValue ? JSON.parse(localStorageValue) : null;
-    }
-
-    function clearStoredParams() {
-      localStorage.removeItem('oauth2-test-params');
-    }
-
-    function checkAuthorizationStatus() {
-      var storedParams = getStoredParams();
-
-      if (storedParams && storedParams['access_token']) {
-        // L'utilisateur est connecté
-        showUserInfo(storedParams['access_token']);
-        showLogoutButton();
+    // Function to check if the user is logged in
+    function checkIfUserIsLoggedIn() {
+      var accessToken = getCookie('oauth2-test-access-token');
+      if (accessToken) {
+        getUserInfo(accessToken);
       } else {
-        // L'utilisateur n'est pas connecté
-        showLoginButton();
+        // Check if authorization code is present in the URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var authorizationCode = urlParams.get('code');
+        if (authorizationCode) {
+          exchangeCodeForToken(authorizationCode);
+        } else {
+          oauth2SignIn();
+        }
       }
     }
 
-    function showUserInfo(accessToken) {
-      // Utilisez l'accessToken pour effectuer des requêtes API ou afficher les informations de l'utilisateur
-      console.log("User is logged in. Access Token: " + accessToken);
-    }
+    // Function to exchange the authorization code for an access token
+    function exchangeCodeForToken(code) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', TOKEN_ENDPOINT);
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-    function showLoginButton() {
-      var loginButton = document.createElement('button');
-      loginButton.textContent = 'Login with Google';
-      loginButton.onclick = function () {
-        oauth2SignIn();
-      };
-      document.body.appendChild(loginButton);
-    }
-
-    function showLogoutButton() {
-      var logoutButton = document.createElement('button');
-      logoutButton.textContent = 'Logout';
-      logoutButton.onclick = function () {
-        logout();
-      };
-      document.body.appendChild(logoutButton);
-    }
-
-    function oauth2SignIn() {
-      var state = generateRandomState();
-
-      var params = {
+      var tokenParams = {
+        'code': code,
         'client_id': YOUR_CLIENT_ID,
+        'client_secret': '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', // Replace with your client secret
         'redirect_uri': YOUR_REDIRECT_URI,
-        'scope': 'https://www.googleapis.com/auth/youtube.force-ssl',
-        'state': state,
-        'include_granted_scopes': 'true',
-        'response_type': 'token'
+        'grant_type': 'authorization_code'
       };
 
-      storeParamsInLocalStorage(params);
+      var formData = [];
+      for (var key in tokenParams) {
+        formData.push(encodeURIComponent(key) + '=' + encodeURIComponent(tokenParams[key]));
+      }
 
-      // Redirigez l'utilisateur vers la page intermédiaire pour gérer le flux d'authentification
-      window.location.href = oauth2Endpoint + '?' +
-        'client_id=' + encodeURIComponent(params['client_id']) + '&' +
-        'redirect_uri=' + encodeURIComponent(params['redirect_uri']) + '&' +
-        'scope=' + encodeURIComponent(params['scope']) + '&' +
-        'state=' + encodeURIComponent(params['state']) + '&' +
-        'include_granted_scopes=' + encodeURIComponent(params['include_granted_scopes']) + '&' +
-        'response_type=' + encodeURIComponent(params['response_type']);
+      xhr.onreadystatechange = function (e) {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var response = JSON.parse(xhr.response);
+            var accessToken = response.access_token;
+
+            // Use a secure cookie to store the access token
+            setCookie('oauth2-test-access-token', accessToken, 1); // 1 day expiration
+            getUserInfo(accessToken);
+          } else {
+            console.error('Token exchange failed');
+          }
+        }
+      };
+
+      xhr.send(formData.join('&'));
     }
 
+    // Function to get user information
+    function getUserInfo(accessToken) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true&access_token=' + accessToken);
+      xhr.onreadystatechange = function (e) {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          var response = JSON.parse(xhr.response);
+          var channelName = response.items[0].snippet.title;
+          document.getElementById('channelName').innerText = 'Channel Name: ' + channelName;
+          document.getElementById('logoutButton').style.display = 'block';
+        } else if (xhr.readyState === 4 && xhr.status === 401) {
+          console.error('Invalid token');
+          setCookie('oauth2-test-access-token', '', 0); // Remove the cookie
+          oauth2SignIn(); // Redirect to the authorization process
+        }
+      };
+      xhr.send(null);
+    }
+
+    // Function to handle logout
     function logout() {
-      clearStoredParams();
-      // Vous pouvez également rediriger l'utilisateur vers la page de déconnexion de Google
-      window.location.href = logoutEndpoint;
+      setCookie('oauth2-test-access-token', '', 0); // Remove the cookie
+      location.reload(); // Reload the page to go back to the logged-out state
     }
 
-    // Vérifiez le statut d'autorisation lors du chargement de la page
-    checkAuthorizationStatus();
+    // Function to start the authorization process
+    function oauth2SignIn() {
+      var authorizationUrl =
+        AUTHORIZATION_ENDPOINT +
+        '?client_id=' + encodeURIComponent(YOUR_CLIENT_ID) +
+        '&redirect_uri=' + encodeURIComponent(YOUR_REDIRECT_URI) +
+        '&scope=' + encodeURIComponent('https://www.googleapis.com/auth/youtube.force-ssl') +
+        '&state=' + encodeURIComponent('try_sample_request') +
+        '&response_type=code';
+
+      // Redirect the user to the authorization URL
+      window.location.href = authorizationUrl;
+    }
+
+    // Function to set the value of a cookie
+    function setCookie(name, value, days) {
+      var expires = '';
+      if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = '; expires=' + date.toUTCString();
+      }
+      document.cookie = name + '=' + value + expires + '; path=/; secure; samesite=strict';
+    }
+
+    // Function to get the value of a cookie
+    function getCookie(name) {
+      var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      if (match) return match[2];
+      else return null;
+    }
+
+    // Check login status when the page loads
+    checkIfUserIsLoggedIn();
   </script>
+
+  <!-- Add a span element to display the channel name -->
+  <span id="channelName"></span>
+
+  <!-- Add a button for logout -->
+  <button id="logoutButton" onclick="logout();" style="display: none;">Logout</button>
+
+  <!-- Add other HTML content as needed -->
+
 </body>
 </html>
