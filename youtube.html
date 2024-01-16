@@ -75,20 +75,6 @@
       location.reload(); // Recharger la page pour retourner à l'état non connecté
     }
 
-    // Fonction pour démarrer le processus d'autorisation
-    function oauth2SignIn() {
-      var authorizationUrl =
-        AUTHORIZATION_ENDPOINT +
-        '?client_id=' + encodeURIComponent(YOUR_CLIENT_ID) +
-        '&redirect_uri=' + encodeURIComponent(YOUR_REDIRECT_URI) +
-        '&scope=' + encodeURIComponent('https://www.googleapis.com/auth/youtube.force-ssl') +
-        '&state=' + encodeURIComponent('try_sample_request') +
-        '&response_type=code';
-
-      // Rediriger l'utilisateur vers l'URL d'autorisation
-      window.location.href = authorizationUrl;
-    }
-
     var fragmentString = location.hash.substring(1);
 
     // Analyser la chaîne de requête pour voir si la demande de page provient du serveur OAuth 2.0.
@@ -98,11 +84,8 @@
       params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
     }
 
-    if (Object.keys(params).length > 0) {
-      localStorage.setItem('oauth2-test-params', JSON.stringify(params));
-      if (params['state'] && params['state'] == 'try_sample_request') {
-        exchangeCodeForToken(params['code']);
-      }
+    if (params['code']) {
+      exchangeCodeForToken(params['code']);
     } else {
       checkIfUserIsLoggedIn();
     }
