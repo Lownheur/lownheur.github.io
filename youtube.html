@@ -9,11 +9,11 @@
   <nav class="parent_nav">
     <a href="index.html" class="child_nav">Accueil</a> 
     <a href="linktree.html" class="child_nav">Linktree</a>
-    <a href="youtube.html" class="child_nav">youtube appi</a>
+    <a href="youtube.html" class="child_nav">youtube api</a>
   </nav>
   <script>
     var YOUR_CLIENT_ID = '91235972960-bjuq63mbtmdemk4qsa4epb4o6c5vo1it.apps.googleusercontent.com';
-    var YOUR_REDIRECT_URI = 'https://lownheur.com';
+    var YOUR_REDIRECT_URI = 'https://lownheur.com/oauth-callback';
     var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
     var logoutEndpoint = 'https://accounts.google.com/logout';
 
@@ -21,17 +21,17 @@
       return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     }
 
-    function storeParamsInSession(params) {
-      sessionStorage.setItem('oauth2-test-params', JSON.stringify(params));
+    function storeParamsInLocalStorage(params) {
+      localStorage.setItem('oauth2-test-params', JSON.stringify(params));
     }
 
     function getStoredParams() {
-      var sessionValue = sessionStorage.getItem('oauth2-test-params');
-      return sessionValue ? JSON.parse(sessionValue) : null;
+      var localStorageValue = localStorage.getItem('oauth2-test-params');
+      return localStorageValue ? JSON.parse(localStorageValue) : null;
     }
 
     function clearStoredParams() {
-      sessionStorage.removeItem('oauth2-test-params');
+      localStorage.removeItem('oauth2-test-params');
     }
 
     function checkAuthorizationStatus() {
@@ -82,7 +82,7 @@
         'response_type': 'token'
       };
 
-      storeParamsInSession(params);
+      storeParamsInLocalStorage(params);
 
       // Redirigez l'utilisateur vers la page intermédiaire pour gérer le flux d'authentification
       window.location.href = oauth2Endpoint + '?' +
