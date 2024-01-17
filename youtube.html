@@ -1,5 +1,4 @@
-
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -10,61 +9,49 @@
   <nav class="parent_nav">
     <a href="index.html" class="child_nav">Accueil</a> 
     <a href="linktree.html" class="child_nav">Linktree</a>
-    <a href="yyoutube.html" class="child_nav">youtube api</a>
+    <a href="youtube.html" class="child_nav">youtube api</a>
   </nav>
 
   <script>
-    // Remplacez ces valeurs par celles de votre application OAuth 2.0
     var YOUR_CLIENT_ID = '91235972960-bjuq63mbtmdemk4qsa4epb4o6c5vo1it.apps.googleusercontent.com';
     var YOUR_REDIRECT_URI = 'https://lownheur.com';
-
-    // Endpoint de déconnexion de Google
+    var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
     var logoutEndpoint = 'https://accounts.google.com/logout';
 
-    // Fonction pour générer un état aléatoire
     function generateRandomState() {
       return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     }
 
-    // Fonction pour stocker les paramètres dans un cookie
     function storeParamsInCookie(params) {
       var expirationDate = new Date();
       expirationDate.setFullYear(expirationDate.getFullYear() + 10); // Expire dans 10 ans
       document.cookie = 'oauth2-test-params=' + encodeURIComponent(JSON.stringify(params)) + '; expires=' + expirationDate.toUTCString() + '; path=/';
     }
 
-    // Fonction pour récupérer les paramètres stockés
     function getStoredParams() {
       var cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)oauth2-test-params\s*=\s*([^;]*).*$)|^.*$/, '$1');
       return cookieValue ? JSON.parse(decodeURIComponent(cookieValue)) : null;
     }
 
-    // Fonction pour effacer les paramètres stockés
     function clearStoredParams() {
       document.cookie = 'oauth2-test-params=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     }
 
-    // Fonction pour vérifier le statut d'autorisation
     function checkAuthorizationStatus() {
       var storedParams = getStoredParams();
 
       if (storedParams && storedParams['access_token']) {
-        // L'utilisateur est connecté
         showUserInfo(storedParams['access_token']);
         showLogoutButton();
       } else {
-        // L'utilisateur n'est pas connecté
         showLoginButton();
       }
     }
 
-    // Fonction pour afficher les informations de l'utilisateur
     function showUserInfo(accessToken) {
-      // Utilisez l'accessToken pour effectuer des requêtes API ou afficher les informations de l'utilisateur
       console.log("User is logged in. Access Token: " + accessToken);
     }
 
-    // Fonction pour afficher le bouton de connexion
     function showLoginButton() {
       var loginButton = document.createElement('button');
       loginButton.textContent = 'Login with Google';
@@ -74,7 +61,6 @@
       document.body.appendChild(loginButton);
     }
 
-    // Fonction pour afficher le bouton de déconnexion
     function showLogoutButton() {
       var logoutButton = document.createElement('button');
       logoutButton.textContent = 'Logout';
@@ -84,7 +70,6 @@
       document.body.appendChild(logoutButton);
     }
 
-    // Fonction pour effectuer la connexion OAuth 2.0
     function oauth2SignIn() {
       var state = generateRandomState();
 
@@ -101,7 +86,7 @@
 
       var form = document.createElement('form');
       form.setAttribute('method', 'GET');
-      form.setAttribute('action', 'https://accounts.google.com/o/oauth2/v2/auth');
+      form.setAttribute('action', oauth2Endpoint);
 
       for (var p in params) {
         var input = document.createElement('input');
@@ -115,14 +100,11 @@
       form.submit();
     }
 
-    // Fonction pour effectuer la déconnexion
     function logout() {
       clearStoredParams();
-      // Redirigez l'utilisateur vers la page de déconnexion de Google
       window.location.href = logoutEndpoint;
     }
 
-    // Vérifiez le statut d'autorisation lors du chargement de la page
     checkAuthorizationStatus();
   </script>
 </body>
