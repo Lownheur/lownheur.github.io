@@ -9,7 +9,7 @@
   <nav class="parent_nav">
     <a href="index.html" class="child_nav">Accueil</a> 
     <a href="linktree.html" class="child_nav">Linktree</a>
-    <a href="youtube.html" class="child_nav">youtube api</a>
+    <a href="youtube.html" class="child_nav" onclick="checkAuthorizationStatus()">youtube api</a>
   </nav>
 
   <script>
@@ -24,7 +24,7 @@
 
     function storeParamsInCookie(params) {
       var expirationDate = new Date();
-      expirationDate.setFullYear(expirationDate.getFullYear() + 10); // Expire dans 10 ans
+      expirationDate.setFullYear(expirationDate.getFullYear() + 10);
       document.cookie = 'oauth2-test-params=' + encodeURIComponent(JSON.stringify(params)) + '; expires=' + expirationDate.toUTCString() + '; path=/';
     }
 
