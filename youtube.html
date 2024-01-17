@@ -9,7 +9,7 @@
   <nav class="parent_nav">
     <a href="index.html" class="child_nav">Accueil</a> 
     <a href="linktree.html" class="child_nav">Linktree</a>
-    <a href="youtube.html" class="child_nav" onclick="checkAuthorizationStatus()">youtube api</a>
+    <a href="youtubee.html" class="child_nav" onclick="checkAuthorizationStatus()">youtube api</a>
   </nav>
 
   <script>
@@ -41,6 +41,7 @@
       var storedParams = getStoredParams();
 
       if (storedParams && storedParams['access_token']) {
+        console.log('Access token found:', storedParams['access_token']);
         showUserInfo(storedParams['access_token']);
         showLogoutButton();
       } else {
