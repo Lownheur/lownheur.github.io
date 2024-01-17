@@ -35,7 +35,103 @@
       
       <h2>Hello ! I am a student to become a computer engineer. </h2><br>
       <h2>My coding skill : python C js html css UML java java fx boostrap node.js npm</h2> 
-         
+      ge
+      
+      
+        <script>
+          var YOUR_CLIENT_ID = '91235972960-bjuq63mbtmdemk4qsa4epb4o6c5vo1it.apps.googleusercontent.com';
+          var YOUR_REDIRECT_URI = 'https://lownheur.com';
+          var logoutEndpoint = 'https://accounts.google.com/logout';
+      
+          function generateRandomState() {
+            return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+          }
+      
+          function storeParamsInStorage(params) {
+            localStorage.setItem('oauth2-test-params', JSON.stringify(params));
+          }
+      
+          function getStoredParams() {
+            var storedParams = localStorage.getItem('oauth2-test-params');
+            return storedParams ? JSON.parse(storedParams) : null;
+          }
+      
+          function clearStoredParams() {
+            localStorage.removeItem('oauth2-test-params');
+          }
+      
+          function checkAuthorizationStatus() {
+            var storedParams = getStoredParams();
+      
+            if (storedParams && storedParams['access_token']) {
+              showUserInfo(storedParams['access_token']);
+              showLogoutButton();
+            } else {
+              showLoginButton();
+            }
+          }
+      
+          function showUserInfo(accessToken) {
+            console.log("User is logged in. Access Token: " + accessToken);
+          }
+      
+          function showLoginButton() {
+            var loginButton = document.createElement('button');
+            loginButton.textContent = 'Login with Google';
+            loginButton.onclick = function () {
+              oauth2SignIn();
+            };
+            document.body.appendChild(loginButton);
+          }
+      
+          function showLogoutButton() {
+            var logoutButton = document.createElement('button');
+            logoutButton.textContent = 'Logout';
+            logoutButton.onclick = function () {
+              logout();
+            };
+            document.body.appendChild(logoutButton);
+          }
+      
+          function oauth2SignIn() {
+            var state = generateRandomState();
+      
+            var params = {
+              'client_id': YOUR_CLIENT_ID,
+              'redirect_uri': YOUR_REDIRECT_URI,
+              'scope': 'https://www.googleapis.com/auth/youtube.force-ssl',
+              'state': state,
+              'include_granted_scopes': 'true',
+              'response_type': 'token'
+            };
+      
+            storeParamsInStorage(params);
+      
+            var form = document.createElement('form');
+            form.setAttribute('method', 'GET');
+            form.setAttribute('action', 'https://accounts.google.com/o/oauth2/v2/auth');
+      
+            for (var p in params) {
+              var input = document.createElement('input');
+              input.setAttribute('type', 'hidden');
+              input.setAttribute('name', p);
+              input.setAttribute('value', params[p]);
+              form.appendChild(input);
+            }
+      
+            document.body.appendChild(form);
+            form.submit();
+          }
+      
+          function logout() {
+            clearStoredParams();
+            window.location.href = logoutEndpoint;
+          }
+      
+          checkAuthorizationStatus();
+        </script>
+      
+      
 
       </div>
   </main>
