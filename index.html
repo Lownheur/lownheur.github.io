@@ -17,123 +17,156 @@
       </div>
     </div>
     <h1>LOWNHEUR</h1>
-      
+    <style>
+      /* Hide the sections by default */
+      .accueil,.youtube-api{
+        display: none;
+      }
+    </style>
+    <script>
+      // Add event listeners to the navbar links
+      document.addEventListener('DOMContentLoaded', function() {
+        var accueilLink = document.getElementById('accueil-link');
+        var linktreeLink = document.getElementById('linktree-link');
+        var accueilSection = document.querySelector('.accueil');
+        var linktreeSection = document.querySelector('.linktree');
+        var youtubeApiSection = document.querySelector('.youtube-api');
+        var youtubeApiLink = document.getElementById('youtube-api-link');
+        accueilLink.addEventListener('click', function() {
+          accueilSection.style.display = 'block';
+          linktreeSection.style.display = 'none';
+          
+        });
+    
+        linktreeLink.addEventListener('click', function() {
+          accueilSection.style.display = 'none';
+          linktreeSection.style.display = 'block';
+          youtubeApiSection.style.display = 'none';
+        });
+        youtubeApiLink.addEventListener('click', function() {
+          youtubeApiSection.style.display = 'block';
+          linktreeSection.style.display = 'none';
+          accueilSection.style.display = 'none';
+        })
+      });
+    </script>
   </header>
-  <nav class ="parent_nav">
-    <a href="index.html" class="child_nav">Accueil</a> 
-    <a href="linktree.html" class="child_nav" >Linktree</a>
-    <a href="youtube.html" class="child_nav" >youtube api</a>
-   
-   
-  </nav>
+  <div class ="parent_nav">
+    <a id="accueil-link" href="#">Accueil</a>
+    <a id="linktree-link" href="#">Linktree</a>
+    <a id="youtube-api-link" href="#">youtube api</a>
+  </div>
   <main>
   
-    
-    <div class="social-media">
+    <section class="accueil">
+      <div class="social-media">
       
 
       
-      <h2>Hello ! I am a student to become a computer engineer. </h2><br>
-      <h2>My coding skill : python C js html css UML java java fx boostrap node.js npm</h2> 
-      ge
-      
-      
-        <script>
-          var YOUR_CLIENT_ID = '91235972960-bjuq63mbtmdemk4qsa4epb4o6c5vo1it.apps.googleusercontent.com';
-          var YOUR_REDIRECT_URI = 'https://lownheur.com';
-          var logoutEndpoint = 'https://accounts.google.com/logout';
-      
-          function generateRandomState() {
-            return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-          }
-      
-          function storeParamsInStorage(params) {
-            localStorage.setItem('oauth2-test-params', JSON.stringify(params));
-          }
-      
-          function getStoredParams() {
-            var storedParams = localStorage.getItem('oauth2-test-params');
-            return storedParams ? JSON.parse(storedParams) : null;
-          }
-      
-          function clearStoredParams() {
-            localStorage.removeItem('oauth2-test-params');
-          }
-      
-          function checkAuthorizationStatus() {
-            var storedParams = getStoredParams();
-      
-            if (storedParams && storedParams['access_token']) {
-              showUserInfo(storedParams['access_token']);
-              showLogoutButton();
-            } else {
-              showLoginButton();
+        <h2>Hello ! I am a student to become a computer engineer. </h2><br>
+        <h2>My coding skill : python C js html css UML java java fx boostrap node.js npm</h2> 
+          
+  
+        </div>
+
+
+    </section>
+    <section class="linktree">
+      <div class="social-media">
+        <a href="https://www.tiktok.com/@lownheur" target="_blank">Tiktok</a>
+        <a href="https://www.youtube.com/@LownHeur-re5pr" target="_blank" rel="noopener noreferrer">Youtube</a> 
+        <a href="">Instagram</a>
+        <a href="https://www.github.com/LownHeur" target="_blank">Github</a>
+        <a href="https://twitter.com/LownHeur" target="_blank" rel="noopener noreferrer">X</a>
+        <a href="">Discord</a>
+        <a href="">Donate</a>
+      </div>
+
+
+    </section>
+    <section class="youtube-api">
+      <div class="social-media">
+        
+          
+          <script>
+            var YOUR_CLIENT_ID = '91235972960-bjuq63mbtmdemk4qsa4epb4o6c5vo1it.apps.googleusercontent.com';
+            var YOUR_REDIRECT_URI = 'https://lownheur.com';
+            var fragmentString = location.hash.substring(1);
+
+            // Parse query string to see if page request is coming from OAuth 2.0 server.
+            var params = {};
+            var regex = /([^&=]+)=([^&]*)/g, m;
+            while (m = regex.exec(fragmentString)) {
+              params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
             }
-          }
-      
-          function showUserInfo(accessToken) {
-            console.log("User is logged in. Access Token: " + accessToken);
-          }
-      
-          function showLoginButton() {
-            var loginButton = document.createElement('button');
-            loginButton.textContent = 'Login with Google';
-            loginButton.onclick = function () {
-              oauth2SignIn();
-            };
-            document.body.appendChild(loginButton);
-          }
-      
-          function showLogoutButton() {
-            var logoutButton = document.createElement('button');
-            logoutButton.textContent = 'Logout';
-            logoutButton.onclick = function () {
-              logout();
-            };
-            document.body.appendChild(logoutButton);
-          }
-      
-          function oauth2SignIn() {
-            var state = generateRandomState();
-      
-            var params = {
-              'client_id': YOUR_CLIENT_ID,
-              'redirect_uri': YOUR_REDIRECT_URI,
-              'scope': 'https://www.googleapis.com/auth/youtube.force-ssl',
-              'state': state,
-              'include_granted_scopes': 'true',
-              'response_type': 'token'
-            };
-      
-            storeParamsInStorage(params);
-      
-            var form = document.createElement('form');
-            form.setAttribute('method', 'GET');
-            form.setAttribute('action', 'https://accounts.google.com/o/oauth2/v2/auth');
-      
-            for (var p in params) {
-              var input = document.createElement('input');
-              input.setAttribute('type', 'hidden');
-              input.setAttribute('name', p);
-              input.setAttribute('value', params[p]);
-              form.appendChild(input);
+            if (Object.keys(params).length > 0) {
+              localStorage.setItem('oauth2-test-params', JSON.stringify(params) );
+              if (params['state'] && params['state'] == 'try_sample_request') {
+                trySampleRequest();
+              }
             }
-      
-            document.body.appendChild(form);
-            form.submit();
-          }
-      
-          function logout() {
-            clearStoredParams();
-            window.location.href = logoutEndpoint;
-          }
-      
-          checkAuthorizationStatus();
-        </script>
-      
-      
+
+            // If there's an access token, try an API request.
+            // Otherwise, start OAuth 2.0 flow.
+            function trySampleRequest() {
+              var params = JSON.parse(localStorage.getItem('oauth2-test-params'));
+              if (params && params['access_token']) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET',
+                    'https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true&' +
+                    'access_token=' + params['access_token']);
+                xhr.onreadystatechange = function (e) {
+                  if (xhr.readyState === 4 && xhr.status === 200) {
+                    console.log(xhr.response);
+                  } else if (xhr.readyState === 4 && xhr.status === 401) {
+                    // Token invalid, so prompt for user permission.
+                    oauth2SignIn();
+                  }
+                };
+                xhr.send(null);
+              } else {
+                oauth2SignIn();
+              }
+            }
+
+            /*
+            * Create form to request access token from Google's OAuth 2.0 server.
+            */
+            function oauth2SignIn() {
+              // Google's OAuth 2.0 endpoint for requesting an access token
+              var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
+
+              // Create element to open OAuth 2.0 endpoint in new window.
+              var form = document.createElement('form');
+              form.setAttribute('method', 'GET'); // Send as a GET request.
+              form.setAttribute('action', oauth2Endpoint);
+
+              // Parameters to pass to OAuth 2.0 endpoint.
+              var params = {'client_id': YOUR_CLIENT_ID,
+                            'redirect_uri': YOUR_REDIRECT_URI,
+                            'scope': 'https://www.googleapis.com/auth/youtube.force-ssl',
+                            'state': 'try_sample_request',
+                            'include_granted_scopes': 'true',
+                            'response_type': 'token'};
+
+              // Add form parameters as hidden input values.
+              for (var p in params) {
+                var input = document.createElement('input');
+                input.setAttribute('type', 'hidden');
+                input.setAttribute('name', p);
+                input.setAttribute('value', params[p]);
+                form.appendChild(input);
+              }
+
+              // Add form to page and submit it to open the OAuth 2.0 endpoint.
+              document.body.appendChild(form);
+              form.submit();
+            }
+          </script>
 
       </div>
+      
+    </section>
   </main>
   
   
