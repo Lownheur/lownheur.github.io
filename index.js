@@ -16,15 +16,3 @@
           youtubeApiSection.style.display = 'none';
         });
       
-        // JavaScript for changing styles with color input
-document.getElementById('changeBorderColor').addEventListener('input', function() {
-  document.querySelector('.parent_nav').style.border = '2px solid ' + this.value;
-});
-
-document.getElementById('changeTextColor').addEventListener('input', function() {
-  document.querySelector('.child_nav').style.color = this.value;
-});
-
-document.getElementById('changeBackgroundColor').addEventListener('input', function() {
-  document.body.style.backgroundColor = this.value;
-});
