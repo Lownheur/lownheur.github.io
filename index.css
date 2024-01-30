@@ -7,7 +7,7 @@
 body{
   margin:0;
   padding:0;
-  background-color: gray;
+  background-color: black;
   
   
 }
@@ -18,7 +18,7 @@ header {
   justify-content: center;
   align-items: center;
   position: relative;
-  border: 8px solid #000;
+  border: 8px solid white;
   position: absolute;
   
   height: 15vh;
@@ -30,7 +30,7 @@ header {
 
 header h1 {
   font-weight: bold;
-  color: #000000;
+  color: white;
   font-size: 5vh;
   
   
@@ -43,7 +43,7 @@ header h1 {
   align-items: center;
   justify-content: center;
   margin-top: 25vh;
-  border: 8px solid #000;
+  border: 8px solid white;
   right:20px;
   left: 20px;
   height: 5vh;
@@ -51,7 +51,7 @@ header h1 {
 }
 .child_nav{
   
-  color: #000000;
+  color: white;
   margin-right:10px;
   font-weight :bold;
   
@@ -68,7 +68,7 @@ nav a {
   left: 20px;
   height:45vh;
   text-align: center;
-  border: 8px solid #000;
+  border: 8px solid white;
   
   margin-top: 35vh;
   display: flex;
@@ -81,9 +81,9 @@ nav a {
 }
 
 .social-media a{
-    color: #000000;
+    color: white;
     font-size: 4vh;
-    font-weight: bold;
+    font-weight: normal;
     
     
 }
@@ -99,12 +99,12 @@ footer {
   left: 20px; /* Même marge à gauche que dans le header */
   right: 20px; /* Même marge à droite que dans le header */
   
-  border: 8px solid #000;
+  border: 8px solid white;
   
 }
 footer p {
-  color: #000000 !important;
-  font-weight: bold;
+  color: white !important;
+  font-weight: normal;
   font-size: 2vh;
 }
 
@@ -115,7 +115,7 @@ footer p {
   .logo-container {
     height: 10vh;
     width: 10vh; /* Réglez la largeur pour qu'elle soit égale à la hauteur */
-    border: 8px solid #000;
+    border: 5px solid white;
     border-radius: 50%;
     overflow: hidden;
     margin-right: 5px;
