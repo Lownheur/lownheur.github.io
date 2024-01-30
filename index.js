@@ -35,7 +35,7 @@ const draw = () => {
   ctx.fillStyle = 'rgba(0,0,0,.05)';
   ctx.fillRect(0,0,width,height);
   ctx.fillStyle = 'rgba(255,255,255,1)';
-  ctx.font = '${font}px system-ui';
+  ctx.font = `${font}px system-ui`;
   for(let i=0; i < arr.length; i++){
     let txt = matrix[Math.floor(Math.random() * matrix.length)];
     ctx.fillText(txt, i*font, arr[i] * font);
