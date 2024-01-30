@@ -13,7 +13,7 @@
         linktreeLink.addEventListener('click', function() {
           accueilSection.style.display = 'none';
           linktreeSection.style.display = 'block';
-          youtubeApiSection.style.display = 'none';
+          
         });
       
 
@@ -48,4 +48,8 @@ const draw = () => {
 }
 setInterval(draw,20)
 
-window.addEventListener('resize', () => location.reload());
+window.addEventListener('resize', () => {
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+  // Réexécutez la logique de dessin ou tout ajustement nécessaire ici
+});
