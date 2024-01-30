@@ -48,8 +48,4 @@ const draw = () => {
 }
 setInterval(draw,20)
 
-window.addEventListener('resize', () => {
-  width = canvas.width = window.innerWidth;
-  height = canvas.height = window.innerHeight;
-  // Réexécutez la logique de dessin ou tout ajustement nécessaire ici
-});
+window.addEventListener('resize', () => location.reload());
